@@ -1,0 +1,65 @@
+body.home {
+    background: linear-gradient(145deg, #4f4f4f, #a0a0a0); /* subtle sheen */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* full viewport height */
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700; /* Extra bold */
+    text-transform: uppercase; /* All caps like Balenciaga */
+    letter-spacing: 2px; /* Optional: spacing like logo */
+}
+
+.curious {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2.5em;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+
+.bar input[type="text"] {
+    width: 400px;
+    padding: 12px 25px;
+    font-size: 1em;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 2px solid #ccc;
+    border-radius: 25px;
+    outline: none;
+}
+
+.bar input[type="text"]:focus {
+    border-color: #ffffff;
+    background-color: #667; /* subtle highlight */
+    color: white;
+}
+
+.YO{
+    color:#ffffff;
+    display:flex;
+}
+
+
+.btn-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: transparent;   /* No fill */
+    color: #ffffff;                    /* Text color */
+    text-decoration: none;
+    border: 2px solid #667;         /* Outline color */
+    border-radius: 25px;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
+}
+
+
+
+
+
+
