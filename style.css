@@ -1,0 +1,223 @@
+/* General Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f6f8;
+    color: #1a1a1a;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark Mode */
+body.dark-mode {
+    background-color: #1f1f1f;
+    color: #f4f4f4;
+}
+
+/* Header */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+body.dark-mode .top-bar {
+    background-color: #2b2b2b;
+}
+
+/* Logo */
+.logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.logo .emoji {
+    font-size: 28px;
+}
+
+/* Top Right Links */
+.top-right a {
+    margin-left: 10px;
+    font-size: 16px;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    color: #333333;
+}
+
+body.dark-mode .top-right a {
+    color: #f4f4f4;
+}
+
+.top-right a:hover {
+    background-color: #0077cc;
+    color: white;
+}
+
+/* Dark Mode Toggle */
+.mode-toggle {
+    font-size: 16px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background-color: #0077cc;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.mode-toggle:hover {
+    background-color: #005fa3;
+}
+
+body.dark-mode .mode-toggle {
+    background-color: #555555;
+    color: #f4f4f4;
+}
+
+body.dark-mode .mode-toggle:hover {
+    background-color: #777777;
+}
+
+/* Search Section */
+.search-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 200px; /* move to roughly middle of screen */
+}
+
+/* Typing Animation Text */
+.typing-text {
+    font-family: 'Roboto', sans-serif;
+    font-size: 22px; /* slightly larger */
+    color: #1a1a1a;
+    margin-bottom: 20px;
+    min-height: 28px;
+    white-space: pre;
+    letter-spacing: 0.5px;
+    border-right: 2px solid #0077cc; /* blinking cursor */
+    animation: blink 0.7s step-end infinite;
+}
+
+body.dark-mode .typing-text {
+    color: #f4f4f4;
+    border-right-color: #f4f4f4;
+}
+
+/* Blinking cursor */
+@keyframes blink {
+    from, to { border-color: transparent; }
+    50% { border-color: inherit; }
+}
+
+/* Search Bar */
+.search-bar {
+    display: flex;
+    width: 100%;
+    max-width: 650px; /* slightly longer */
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    background-color: #ffffff;
+}
+
+body.dark-mode .search-bar {
+    background-color: #2b2b2b;
+}
+
+.search-input {
+    flex-grow: 1;
+    padding: 18px 22px; /* larger padding */
+    font-size: 18px; /* larger font */
+    border: none;
+    outline: none;
+    background: transparent;
+    color: inherit;
+}
+
+/* Search Button */
+.search-button {
+    padding: 18px 26px; /* larger */
+    font-size: 18px;
+    background-color: #0077cc;
+    border: none;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+    background-color: #005fa3;
+}
+
+body.dark-mode .search-button {
+    background-color: #555555;
+    color: #f4f4f4;
+}
+
+body.dark-mode .search-button:hover {
+    background-color: #777777;
+}
+
+/* Mobile View */
+@media (max-width: 768px) {
+    .top-bar {
+        height: 60px;
+        padding: 10px 15px;
+    }
+
+    .logo {
+        font-size: 24px;
+    }
+
+    .logo .emoji {
+        font-size: 24px;
+    }
+
+    .top-right a, .mode-toggle {
+        font-size: 14px;
+        padding: 5px 10px;
+    }
+
+    .search-section {
+        margin-top: 180px;
+    }
+
+    .search-bar {
+        max-width: 100%;
+    }
+
+    .search-input {
+        font-size: 16px;
+        padding: 14px 16px;
+    }
+
+    .search-button {
+        font-size: 16px;
+        padding: 14px 16px;
+    }
+
+    .typing-text {
+        font-size: 18px;
+        min-height: 24px;
+    }
+}
