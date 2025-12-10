@@ -4,104 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real or Reel</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@400;500&display=swap%22 rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <!-- Top Navigation Bar -->
+ 
 <header class="top-bar">
-
+ 
     <!-- Left: Logo -->
     <div class="nav-left">
         <div class="logo">
             RealorReel <span class="emoji">🎣</span>
         </div>
     </div>
-
+ 
     <!-- Center: intentionally empty -->
     <div class="nav-center"></div>
-
-    <!-- Right: Links -->
+ 
+    <!-- Right: Links / Options -->
     <div class="nav-right">
+        <!-- Desktop Links -->
         <a class="about" href="about.html">About</a>
         <a class="help" href="help.html">Help</a>
-        <a class="options" href="options.html">Options</a>
-
-        <!-- ✅ Hamburger button (mobile only) -->
+ 
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Options ▾</a>
+            <div class="dropdown-content">
+                <button id="darkModeBtn">Dark Mode</button>
+                <a href="apikey.html">API Key</a>
+            </div>
+        </div>
+ 
+        <!-- Hamburger button (mobile only) -->
         <button class="hamburger" id="hamburgerBtn">&#9776;</button>
     </div>
-
 </header>
-
-<!-- ✅ Mobile dropdown menu -->
+ 
+<!-- Mobile menu -->
 <div class="mobile-menu" id="mobileMenu">
     <a href="about.html">About</a>
     <a href="help.html">Help</a>
-    <a href="options.html">Options</a>
+    <!-- Options inside mobile menu -->
+    <div class="dropdown mobile-dropdown">
+        <a href="#" class="dropbtn">Options ▾</a>
+        <div class="dropdown-content">
+            <button id="mobileDarkModeBtn">Dark Mode</button>
+            <a href="apikey.html">API Key</a>
+        </div>
+    </div>
 </div>
-
-
-    <!-- Search Section -->
-    <section class="search-section">
-        <div class="typing-text" id="typing-text"></div>
-
-        <form class="search-bar" action="/search" method="get">
-            <input type="search" placeholder="Paste URL here..." name="q" class="search-input">
-            <button type="submit" class="search-button">Search</button>
-        </form>
-    </section>
-
-
-    <!-- Scripts -->
-    <script>
-        // Dark Mode Toggle
-        const toggleButton = document.getElementById('dark-mode-toggle');
-        if (toggleButton) {
-            toggleButton.textContent = "Dark Mode";
-            toggleButton.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-                toggleButton.textContent = document.body.classList.contains('dark-mode')
-                    ? "Light Mode"
-                    : "Dark Mode";
-            });
-        }
-    </script>
-
-    <script>
-        // Typing Animation
-        const text = "Drop a URL, catch the results.";
-        const typingElement = document.getElementById('typing-text');
-        const typingSpeed = 100;
-        const delayBetweenLoops = 2000;
-
-        function typeLoop() {
-            typingElement.textContent = "";
-            let index = 0;
-
-            function type() {
-                if(index < text.length){
-                    typingElement.textContent += text.charAt(index);
-                    index++;
-                    setTimeout(type, typingSpeed);
-                } else {
-                    setTimeout(typeLoop, delayBetweenLoops);
-                }
+ 
+<!-- Search Section -->
+<section class="search-section">
+    <div class="typing-text" id="typing-text"></div>
+ 
+    <form class="search-bar" action="/search" method="get">
+        <input type="search" placeholder="Paste URL here..." name="q" class="search-input">
+        <button type="submit" class="search-button">Search</button>
+    </form>
+</section>
+ 
+<!-- Scripts -->
+<script>
+    // Dark Mode toggle for desktop
+    const darkModeBtn = document.getElementById('darkModeBtn');
+    function updateDarkModeText(btn) {
+        btn.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+    }
+ 
+    darkModeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        updateDarkModeText(darkModeBtn);
+        updateDarkModeText(mobileDarkModeBtn);
+    });
+    updateDarkModeText(darkModeBtn);
+ 
+    // Dark Mode toggle for mobile
+    const mobileDarkModeBtn = document.getElementById('mobileDarkModeBtn');
+    mobileDarkModeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        updateDarkModeText(darkModeBtn);
+        updateDarkModeText(mobileDarkModeBtn);
+    });
+    updateDarkModeText(mobileDarkModeBtn);
+</script>
+ 
+<script>
+    // Typing animation
+    const text = "Drop a URL, catch the results.";
+    const typingElement = document.getElementById('typing-text');
+    const typingSpeed = 100;
+    const delayBetweenLoops = 2000;
+ 
+    function typeLoop() {
+        typingElement.textContent = "";
+        let index = 0;
+        function type() {
+            if(index < text.length){
+                typingElement.textContent += text.charAt(index);
+                index++;
+                setTimeout(type, typingSpeed);
+            } else {
+                setTimeout(typeLoop, delayBetweenLoops);
             }
-            type();
         }
-        window.addEventListener('load', typeLoop);
-    </script>
-
-    <!-- ✅ MOBILE MENU TOGGLE SCRIPT -->
-    <script>
-        const burger = document.getElementById("hamburgerBtn");
-        const mobileMenu = document.getElementById("mobileMenu");
-
-        burger.addEventListener("click", () => {
-            mobileMenu.classList.toggle("open");
-        });
-    </script>
-
+        type();
+    }
+    window.addEventListener('load', typeLoop);
+</script>
+ 
+<!-- Mobile Hamburger Toggle -->
+<script>
+    const burger = document.getElementById("hamburgerBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+ 
+    burger.addEventListener("click", () => {
+        mobileMenu.classList.toggle("open");
+    });
+</script>
+ 
 </body>
 </html>
+ 
