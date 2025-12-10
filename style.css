@@ -18,7 +18,10 @@ body.dark-mode {
     color: #f4f4f4;
 }
 
-/* Header */
+/* ---------------------- */
+/*       HEADER NAV       */
+/* ---------------------- */
+
 .top-bar {
     display: flex;
     justify-content: space-between;
@@ -26,18 +29,34 @@ body.dark-mode {
     padding: 15px 20px;
     background-color: #ffffff;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    position: relative;
 }
 
+/* Dark mode header */
 body.dark-mode .top-bar {
     background-color: #2b2b2b;
 }
 
+/* Flex sections */
+.nav-left, .nav-center, .nav-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.nav-left {
+    justify-content: flex-start;
+}
+
+.nav-center {
+    justify-content: center; /* intentionally empty */
+}
+
+.nav-right {
+    justify-content: flex-end;
+}
+
 /* Logo */
 .logo {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
     font-family: 'Montserrat', sans-serif;
     font-size: 28px;
     font-weight: 700;
@@ -50,9 +69,9 @@ body.dark-mode .top-bar {
     font-size: 28px;
 }
 
-/* Top Right Links */
-.top-right a {
-    margin-left: 10px;
+/* Top-right links */
+.nav-right a {
+    margin-left: 12px;
     font-size: 16px;
     text-decoration: none;
     padding: 6px 12px;
@@ -61,11 +80,11 @@ body.dark-mode .top-bar {
     color: #333333;
 }
 
-body.dark-mode .top-right a {
+body.dark-mode .nav-right a {
     color: #f4f4f4;
 }
 
-.top-right a:hover {
+.nav-right a:hover {
     background-color: #0077cc;
     color: white;
 }
@@ -95,7 +114,10 @@ body.dark-mode .mode-toggle:hover {
     background-color: #777777;
 }
 
-/* Search Section */
+/* ---------------------- */
+/*     SEARCH SECTION     */
+/* ---------------------- */
+
 .search-section {
     display: flex;
     flex-direction: column;
@@ -106,13 +128,13 @@ body.dark-mode .mode-toggle:hover {
 /* Typing Animation Text */
 .typing-text {
     font-family: 'Roboto', sans-serif;
-    font-size: 22px; /* slightly larger */
+    font-size: 22px;
     color: #1a1a1a;
     margin-bottom: 20px;
     min-height: 28px;
     white-space: pre;
     letter-spacing: 0.5px;
-    border-right: 2px solid #0077cc; /* blinking cursor */
+    border-right: 2px solid #0077cc;
     animation: blink 0.7s step-end infinite;
 }
 
@@ -131,7 +153,7 @@ body.dark-mode .typing-text {
 .search-bar {
     display: flex;
     width: 100%;
-    max-width: 650px; /* slightly longer */
+    max-width: 650px;
     border-radius: 30px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -144,8 +166,8 @@ body.dark-mode .search-bar {
 
 .search-input {
     flex-grow: 1;
-    padding: 18px 22px; /* larger padding */
-    font-size: 18px; /* larger font */
+    padding: 18px 22px;
+    font-size: 18px;
     border: none;
     outline: none;
     background: transparent;
@@ -154,7 +176,7 @@ body.dark-mode .search-bar {
 
 /* Search Button */
 .search-button {
-    padding: 18px 26px; /* larger */
+    padding: 18px 26px;
     font-size: 18px;
     background-color: #0077cc;
     border: none;
@@ -178,8 +200,12 @@ body.dark-mode .search-button:hover {
     background-color: #777777;
 }
 
-/* Mobile View */
+/* ---------------------- */
+/*     MOBILE RESPONSIVE  */
+/* ---------------------- */
+
 @media (max-width: 768px) {
+
     .top-bar {
         height: 60px;
         padding: 10px 15px;
@@ -193,7 +219,7 @@ body.dark-mode .search-button:hover {
         font-size: 24px;
     }
 
-    .top-right a, .mode-toggle {
+    .nav-right a, .mode-toggle {
         font-size: 14px;
         padding: 5px 10px;
     }
@@ -221,3 +247,69 @@ body.dark-mode .search-button:hover {
         min-height: 24px;
     }
 }
+
+/* ---------------------- */
+/*   MOBILE NAVIGATION    */
+/* ---------------------- */
+
+/* Hide the hamburger on desktop */
+.hamburger {
+    display: none;
+    font-size: 26px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 12px;
+    color: #333;
+}
+
+body.dark-mode .hamburger {
+    color: #f4f4f4;
+}
+
+/* Mobile dropdown menu */
+.mobile-menu {
+    display: none;
+    flex-direction: column;
+    background-color: #ffffff;
+    width: 100%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .mobile-menu {
+    background-color: #2b2b2b;
+}
+
+.mobile-menu a {
+    padding: 14px 20px;
+    text-decoration: none;
+    color: #333;
+    border-top: 1px solid #e5e5e5;
+}
+
+body.dark-mode .mobile-menu a {
+    color: #f4f4f4;
+    border-top-color: #444;
+}
+
+.mobile-menu.open {
+    display: flex;
+}
+
+/* ---------------------- */
+/*   RESPONSIVE CHANGES   */
+/* ---------------------- */
+
+@media (max-width: 768px) {
+
+    /* Hide desktop links */
+    .nav-right a {
+        display: none;
+    }
+
+    /* Show hamburger */
+    .hamburger {
+        display: block;
+    }
+}
+
