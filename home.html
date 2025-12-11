@@ -15,10 +15,13 @@
             RealorReel <span class="emoji">🎣</span>
         </div>
     </div>
+
     <div class="nav-center"></div>
+
     <div class="nav-right">
         <a class="about" href="about.html">About</a>
         <a class="help" href="help.html">Help</a>
+
         <div class="dropdown">
             <a href="#" class="dropbtn">Options ▾</a>
             <div class="dropdown-content">
@@ -26,10 +29,12 @@
                 <a href="apikey.html">API Key</a>
             </div>
         </div>
+
         <button class="hamburger" id="hamburgerBtn">&#9776;</button>
     </div>
 </header>
 
+<!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
     <a href="about.html">About</a>
     <a href="help.html">Help</a>
@@ -54,7 +59,7 @@
     <div id="resultBox" class="result-box"></div>
 </section>
 
-<!-- Dark Mode Script -->
+<!-- DARK MODE SCRIPT -->
 <script>
 const darkModeBtn = document.getElementById('darkModeBtn');
 const mobileDarkModeBtn = document.getElementById('mobileDarkModeBtn');
@@ -76,12 +81,11 @@ mobileDarkModeBtn.addEventListener('click', () => {
 });
 </script>
 
-<!-- Typing Animation -->
+<!-- TYPING TEXT ANIMATION -->
 <script>
 const text = "Drop a URL, catch the results.";
 const typingElement = document.getElementById('typing-text');
-const typingSpeed = 100;
-const delayBetweenLoops = 2000;
+let idx = 0;
 
 function typeLoop() {
     typingElement.textContent = "";
@@ -90,9 +94,9 @@ function typeLoop() {
         if (index < text.length) {
             typingElement.textContent += text.charAt(index);
             index++;
-            setTimeout(type, typingSpeed);
+            setTimeout(type, 90);
         } else {
-            setTimeout(typeLoop, delayBetweenLoops);
+            setTimeout(typeLoop, 1800);
         }
     }
     type();
@@ -100,192 +104,192 @@ function typeLoop() {
 window.addEventListener('load', typeLoop);
 </script>
 
-<!-- Mobile Menu -->
+<!-- MOBILE MENU -->
 <script>
 const burger = document.getElementById("hamburgerBtn");
 const mobileMenu = document.getElementById("mobileMenu");
-
-burger.addEventListener("click", () => {
-    mobileMenu.classList.toggle("open");
-});
+burger.addEventListener("click", () => mobileMenu.classList.toggle("open"));
 </script>
 
-<!-- SUPER ADVANCED URL ANALYZER (FINAL CONSOLIDATED ENGINE) -->
+<!-- ⭐ SUPER ADVANCED LOOP-BASED URL ANALYZER ⭐ -->
 <script>
 
 /* ----------------------------
    Utility Functions
 ----------------------------- */
 
-// Levenshtein distance (typosquatting detection)
 function levenshtein(a, b) {
     const dp = Array.from({ length: b.length + 1 }, (_, i) => [i]);
     for (let j = 1; j <= a.length; j++) dp[0][j] = j;
     for (let i = 1; i <= b.length; i++) {
         for (let j = 1; j <= a.length; j++) {
             dp[i][j] = Math.min(
-                dp[i - 1][j] + 1,
-                dp[i][j - 1] + 1,
-                dp[i - 1][j - 1] + (a[j - 1] === b[i - 1] ? 0 : 1)
+                dp[i-1][j] + 1,
+                dp[i][j-1] + 1,
+                dp[i-1][j-1] + (a[j-1] === b[i-1] ? 0 : 1)
             );
         }
     }
     return dp[b.length][a.length];
 }
 
-// Homoglyph (Cyrillic/Greek)
 function hasHomoglyphs(str) {
     return /[\u0400-\u04FF\u0370-\u03FF]/.test(str);
 }
 
-// Encoded redirect (hex or base64)
 function looksEncoded(str) {
     return /^[A-Za-z0-9+/]{12,}={0,2}$/.test(str) || /^[0-9A-F]{16,}$/i.test(str);
 }
 
 /* ----------------------------
-   Scam Patterns & Data Sets
+   Data Sets
 ----------------------------- */
 
 const phishingClusters = [
-    ["login", "verify"], ["secure", "update"], ["account", "verify"],
-    ["security", "alert"], ["action", "required"], ["package", "held"],
-    ["delivery", "confirm"], ["account", "locked"], ["review", "appeal"],
-    ["billing", "payment"]
+    ["login","verify"],["secure","update"],["account","verify"],
+    ["security","alert"],["action","required"],["package","held"],
+    ["delivery","confirm"],["account","locked"],["review","appeal"],
+    ["billing","payment"]
 ];
 
 const highRiskBrands = [
-    "bankofamerica", "boa", "chase", "wellsfargo",
-    "instagram", "facebook", "meta", "apple", "appleid",
-    "icloud", "outlook", "hotmail",
-    "fedex", "ups", "usps", "dhl"
+    "bankofamerica","boa","chase","wellsfargo",
+    "instagram","facebook","meta","apple","appleid",
+    "icloud","outlook","hotmail","fedex","ups","usps","dhl"
 ];
 
 const autoUnsafeTLDs = [
-    ".fake", ".invalid", ".test", ".support", ".support-login",
-    ".co-login", ".security-check", ".verify-user", ".user-update"
+    ".fake",".invalid",".test",".support",".support-login",
+    ".co-login",".security-check",".verify-user",".user-update"
+];
+
+const phishingWords = [
+    "login","verify","secure","update","alert","confirm","required",
+    "locked","restore","appeal","payment","billing","review",
+    "suspended","disabled"
+];
+
+const deliveryWords = [
+    "package","delivery","fedex","usps","ups","dhl",
+    "held","action-required","fee","confirm-details"
 ];
 
 /* ----------------------------
-   Main Analyzer
+   LOOP-BASED ENGINE
 ----------------------------- */
 
 function analyzeURL(inputUrl) {
+
     let url = inputUrl.trim();
     let lower = url.toLowerCase();
-    let risk = 0;
-    let findings = [];
-
     let clean = lower.replace(/^https?:\/\//, "").replace(/^www\./, "");
     let host = clean.split(/[/?#]/)[0];
 
-    // Auto-unsafe TLDs
-    autoUnsafeTLDs.forEach(tld => {
-        if (host.includes(tld)) {
-            risk += 90;
-            findings.push(`Domain uses high-risk TLD '${tld}'.`);
-        }
-    });
+    let risk = 0;
+    let findings = [];
 
-    // Hyphen overload
-    let hyphenCount = (host.match(/-/g) || []).length;
-    if (hyphenCount >= 4) {
-        risk += 40;
-        findings.push("Excessive hyphens suggest a synthetic phishing domain.");
-    }
-
-    // Brand impersonation
-    highRiskBrands.forEach(brand => {
-        if (host.includes(brand)) {
-            risk += 50;
-            findings.push(`Brand impersonation detected: '${brand}'.`);
-        }
-    });
-
-    // Phishing keyword clusters
-    phishingClusters.forEach(cluster => {
-        let hits = cluster.filter(word => lower.includes(word));
-        if (hits.length >= 2) {
-            risk += 50;
-            findings.push(`Phishing keyword cluster detected: ${hits.join(" + ")}`);
-        }
-    });
-
-    // Suspicious phishing words
-    const phishingWords = [
-        "login","verify","secure","update","alert","confirm",
-        "required","locked","restore","appeal","payment",
-        "billing","review","suspended","disabled"
-    ];
-    phishingWords.forEach(w => {
-        if (host.includes(w)) {
-            risk += 25;
-            findings.push(`Phishing-related term detected: '${w}'.`);
-        }
-    });
-
-    // Numeric tokens
-    if (/[0-9]{3,}/.test(host)) {
-        risk += 25;
-        findings.push("Suspicious numeric token detected.");
-    }
-
-    // Delivery scam detection
-    const deliveryWords = ["package","delivery","fedex","usps","ups","dhl","held","action-required","fee","confirm-details"];
-    deliveryWords.forEach(w => {
-        if (lower.includes(w)) {
-            risk += 40;
-            findings.push(`Delivery-scam pattern detected: '${w}'.`);
-        }
-    });
-
-    // Encoded redirect
-    if (looksEncoded(lower.split("=").pop())) {
-        risk += 40;
-        findings.push("Encoded redirect detected.");
-    }
-
-    // Homoglyph detection
-    if (hasHomoglyphs(url)) {
-        risk += 40;
-        findings.push("Foreign homoglyph characters detected.");
-    }
-
-    // Typosquatting numbers
     const numberMaps = [
         { bad: "0", good: "o" }, { bad: "1", good: "l" },
-        { bad: "3", good: "e" }, { bad: "5", good: "s" },
+        { bad: "3", good: "e" }, { bad: "5", good: "s" }, 
         { bad: "7", good: "t" }
     ];
-    numberMaps.forEach(s => {
-        if (host.includes(s.bad)) {
-            risk += 45;
-            findings.push(`Typosquatting substitution: '${s.bad}' for '${s.good}'.`);
+
+    const baseBrands = [
+        "paypal","google","amazon","apple",
+        "facebook","netflix","chase","microsoft"
+    ];
+
+    const rules = [
+
+        ...autoUnsafeTLDs.map(tld => ({
+            check: () => host.includes(tld),
+            score: 90,
+            msg: `Domain uses high-risk TLD '${tld}'.`
+        })),
+
+        {
+            check: () => (host.match(/-/g) || []).length >= 4,
+            score: 40,
+            msg: "Excessive hyphens indicate synthetic phishing."
+        },
+
+        ...highRiskBrands.map(brand => ({
+            check: () => host.includes(brand),
+            score: 50,
+            msg: `Brand impersonation detected: '${brand}'.`
+        })),
+
+        ...phishingClusters.map(cluster => ({
+            check: () => cluster.filter(w => lower.includes(w)).length >= 2,
+            score: 50,
+            msg: `Phishing keyword cluster detected: ${cluster.join(" + ")}`
+        })),
+
+        ...phishingWords.map(word => ({
+            check: () => host.includes(word),
+            score: 25,
+            msg: `Suspicious keyword: '${word}'.`
+        })),
+
+        {
+            check: () => /[0-9]{3,}/.test(host),
+            score: 25,
+            msg: "Suspicious numeric token detected."
+        },
+
+        ...deliveryWords.map(word => ({
+            check: () => lower.includes(word),
+            score: 40,
+            msg: `Delivery scam pattern detected: '${word}'.`
+        })),
+
+        {
+            check: () => looksEncoded(lower.split("=").pop()),
+            score: 40,
+            msg: "Encoded redirect detected."
+        },
+
+        {
+            check: () => hasHomoglyphs(url),
+            score: 40,
+            msg: "Foreign homoglyph characters detected."
+        },
+
+        ...numberMaps.map(map => ({
+            check: () => host.includes(map.bad),
+            score: 45,
+            msg: `Typosquatting substitution: '${map.bad}' for '${map.good}'.`
+        })),
+
+        ...baseBrands.map(b => ({
+            check: () => {
+                const dist = levenshtein(host, b);
+                return dist <= 2 && !host.endsWith(`${b}.com`);
+            },
+            score: 50,
+            msg: `Domain closely resembles '${b}' — impersonation likely.`
+        })),
+
+        {
+            check: () => url.length > 80,
+            score: 20,
+            msg: "URL unusually long."
+        },
+
+        {
+            check: () => (host.match(/\./g) || []).length > 3,
+            score: 25,
+            msg: "Excessive subdomains — common phishing technique."
+        }
+    ];
+
+    rules.forEach(rule => {
+        if (rule.check()) {
+            risk += rule.score;
+            findings.push(rule.msg);
         }
     });
 
-    // Levenshtein brand similarity
-    ["paypal","google","amazon","apple","facebook","netflix","chase","microsoft"].forEach(b => {
-        const dist = levenshtein(host, b);
-        if (dist <= 2 && !host.endsWith(`${b}.com`)) {
-            risk += 50;
-            findings.push(`Domain resembles '${b}' — impersonation likely.`);
-        }
-    });
-
-    // Long URL
-    if (url.length > 80) {
-        risk += 20;
-        findings.push("URL is unusually long.");
-    }
-
-    // Excessive subdomains
-    if ((host.match(/\./g) || []).length > 3) {
-        risk += 25;
-        findings.push("Too many subdomains — common in phishing URLs.");
-    }
-
-    // Scoring
     const score = Math.min(100, risk);
     const safePercent = Math.max(0, 100 - score);
 
@@ -296,19 +300,19 @@ function analyzeURL(inputUrl) {
     return { score, safePercent, verdict, findings };
 }
 
-/* ----------------------------
-   Scan Handler + Animation
------------------------------ */
+</script>
 
+<!-- SCAN HANDLER WITH ANIMATION -->
+<script>
 document.getElementById("urlForm").addEventListener("submit", function (event) {
     event.preventDefault();
 
     const input = document.getElementById("urlInput").value;
     const box = document.getElementById("resultBox");
 
-    // Scanning animation
     box.innerHTML = "<p>🔍 Scanning URL</p>";
     let dots = 0;
+
     const interval = setInterval(() => {
         dots = (dots + 1) % 4;
         box.innerHTML = `<p>🔍 Scanning${'.'.repeat(dots)}</p>`;
@@ -332,7 +336,7 @@ document.getElementById("urlForm").addEventListener("submit", function (event) {
             <div style="margin-top:12px;">
                 <div style="width:100%;height:16px;background:#ddd;border-radius:10px;overflow:hidden;">
                     <div id="meterBar"
-                        style="width:0%;height:100%;background:red;transition:width 1.2s, background 1s"></div>
+                        style="width:0%;height:100%;background:red;transition:width 1.2s,background 1s"></div>
                 </div>
                 <p><strong>Safety Score:</strong> ${result.safePercent}%</p>
             </div>
@@ -353,7 +357,6 @@ document.getElementById("urlForm").addEventListener("submit", function (event) {
 
     }, 900);
 });
-
 </script>
 
 </body>
