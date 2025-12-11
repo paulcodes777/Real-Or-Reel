@@ -1,30 +1,118 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
-
-
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real or Reel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="home">
+<body>
 
-<h1 class="curious">real or reel</h1>
-<br><br><br><br><br><br>
-<h1 class="curious">PASTE YOUR URL HERE BELOW IN THE SEARCH BAR</h1>
+<header class="top-bar">
+    <div class="nav-left">
+        <div class="logo">
+            RealorReel <span class="emoji">🎣</span>
+        </div>
+    </div>
 
-<form action="/check_url" class="bar" method="POST">
-  <input type="text" id="url" name="url" placeholder="Enter suspicious URL here">
-</form>
+    <div class="nav-center"></div>
 
-<br><br><br>
-<p class="curious">
-    <a href="url.html" class="btn-link">learn more</a>
-</p>
+    <div class="nav-right">
+        <a class="about" href="about.html">About</a>
+        <a class="help" href="help.html">Help</a>
+
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Options ▾</a>
+            <div class="dropdown-content">
+                <button id="darkModeBtn">Dark Mode</button>
+                <a href="apikey.html">API Key</a>
+            </div>
+        </div>
+
+        <button class="hamburger" id="hamburgerBtn">&#9776;</button>
+    </div>
+</header>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+    <a href="about.html">About</a>
+    <a href="help.html">Help</a>
+    <div class="dropdown mobile-dropdown">
+        <a href="#" class="dropbtn">Options ▾</a>
+        <div class="dropdown-content">
+            <button id="mobileDarkModeBtn">Dark Mode</button>
+            <a href="apikey.html">API Key</a>
+        </div>
+    </div>
+</div>
+
+<!-- Search Section -->
+<section class="search-section">
+    <div class="typing-text" id="typing-text"></div>
+
+    <form id="urlForm" class="search-bar">
+        <input type="search" placeholder="Paste URL here..." id="urlInput" class="search-input" required>
+        <button type="submit" class="search-button">Check URL</button>
+    </form>
+
+    <div id="resultBox" class="result-box"></div>
+</section>
+
+<!-- DARK MODE SCRIPT -->
+<script>
+const darkModeBtn = document.getElementById('darkModeBtn');
+const mobileDarkModeBtn = document.getElementById('mobileDarkModeBtn');
+
+function updateDarkModeText(btn) {
+    btn.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+}
+
+darkModeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    updateDarkModeText(darkModeBtn);
+    updateDarkModeText(mobileDarkModeBtn);
+});
+
+mobileDarkModeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    updateDarkModeText(darkModeBtn);
+    updateDarkModeText(mobileDarkModeBtn);
+});
+</script>
+
+<!-- TYPING TEXT ANIMATION -->
+<script>
+const text = "Drop a URL, catch the results.";
+const typingElement = document.getElementById('typing-text');
+let idx = 0;
+
+function typeLoop() {
+    typingElement.textContent = "";
+    let index = 0;
+    function type() {
+        if (index < text.length) {
+            typingElement.textContent += text.charAt(index);
+            index++;
+            setTimeout(type, 90);
+        } else {
+            setTimeout(typeLoop, 1800);
+        }
+    }
+    type();
+}
+window.addEventListener('load', typeLoop);
+</script>
+
+<!-- MOBILE MENU -->
+<script>
+const burger = document.getElementById("hamburgerBtn");
+const mobileMenu = document.getElementById("mobileMenu");
+burger.addEventListener("click", () => mobileMenu.classList.toggle("open"));
+</script>
+
+<script src="scanner.js"></script>
 
 
 </body>
 </html>
-
-

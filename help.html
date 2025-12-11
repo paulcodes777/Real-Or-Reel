@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help - Real or Reel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="help.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<header class="top-bar">
+    <div class="nav-left">
+        <a href="home.html" class="logo">RealorReel <span class="emoji">🎣</span></a>
+    </div>
+
+    <div class="nav-right">
+        <a href="about.html" class="about">About</a>
+        <a href="help.html" class="help">Help</a>
+
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Options ▾</a>
+            <div class="dropdown-content">
+                <button id="darkModeBtn">Dark Mode</button>
+                <a href="apikey.html">API Key</a>
+            </div>
+        </div>
+
+        <button class="hamburger" id="hamburgerBtn">&#9776;</button>
+    </div>
+</header>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+    <a href="about.html">About</a>
+    <a href="help.html">Help</a>
+    <div class="dropdown mobile-dropdown">
+        <a href="#" class="dropbtn">Options ▾</a>
+        <div class="dropdown-content">
+            <button id="mobileDarkModeBtn">Dark Mode</button>
+            <a href="apikey.html">API Key</a>
+        </div>
+    </div>
+</div>
+
+<!-- Help Content -->
+<section class="help-section">
+    <h1 class="page-title">Help & Support</h1>
+    <p class="page-subtitle">Everything you need to know about using Real or Reel effectively.</p>
+
+    <div class="help-cards">
+        <div class="help-card">
+            <h2>How It Works</h2>
+            <p>Paste any URL in the search bar to analyze whether it’s trustworthy or potentially a scam. Our algorithm evaluates links in real-time using multiple sources.</p>
+        </div>
+        <div class="help-card">
+            <h2>What Counts as a Scam</h2>
+            <p>Links with phishing attempts, malware, suspicious domains, or fraudulent content are flagged to keep you safe online.</p>
+        </div>
+        <div class="help-card">
+            <h2>Accuracy</h2>
+            <p>We combine AI detection with verified databases to provide accurate and reliable results quickly, helping you avoid scams efficiently.</p>
+        </div>
+        <div class="help-card">
+            <h2>Supported URL Types</h2>
+            <p>We support websites, social media links, video platforms, and other online content to ensure comprehensive coverage.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Scripts -->
+<script>
+    // Dark Mode toggle
+    const darkModeBtn = document.getElementById('darkModeBtn');
+    const mobileDarkModeBtn = document.getElementById('mobileDarkModeBtn');
+
+    function updateDarkModeText(btn) {
+        btn.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+    }
+
+    darkModeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        updateDarkModeText(darkModeBtn);
+        updateDarkModeText(mobileDarkModeBtn);
+    });
+
+    mobileDarkModeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        updateDarkModeText(darkModeBtn);
+        updateDarkModeText(mobileDarkModeBtn);
+    });
+
+    updateDarkModeText(darkModeBtn);
+    updateDarkModeText(mobileDarkModeBtn);
+
+    // Mobile Hamburger toggle
+    const burger = document.getElementById("hamburgerBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    burger.addEventListener("click", () => {
+        mobileMenu.classList.toggle("open");
+    });
+</script>
+
+</body>
+</html>
+
+

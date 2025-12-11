@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Real or Reel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="about.css">
+</head>
+<body>
+
+<header class="top-bar">
+    <!-- Left: Logo -->
+    <div class="nav-left">
+        <a href="home.html" class="logo">RealorReel <span class="emoji">🎣</span></a>
+    </div>
+
+    <!-- Right: Desktop links / options -->
+    <div class="nav-right">
+        <a href="about.html" class="about">About</a>
+        <a href="help.html" class="help">Help</a>
+
+        <!-- Dropdown Options -->
+        <div class="dropdown">
+            <a href="#" class="dropbtn">Options ▾</a>
+            <div class="dropdown-content">
+                <button id="darkModeBtn">Dark Mode</button>
+                <a href="apikey.html">API Key</a>
+            </div>
+        </div>
+
+        <!-- Hamburger for mobile -->
+        <button class="hamburger" id="hamburgerBtn">&#9776;</button>
+    </div>
+</header>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+    <a href="about.html">About</a>
+    <a href="help.html">Help</a>
+    <div class="dropdown mobile-dropdown">
+        <a href="#" class="dropbtn">Options ▾</a>
+        <div class="dropdown-content">
+            <button id="mobileDarkModeBtn">Dark Mode</button>
+            <a href="apikey.html">API Key</a>
+        </div>
+    </div>
+</div>
+
+<!-- About Section -->
+<section class="about-section">
+    <h1 class="typewriter">About Real or Reel</h1>
+    <p class="description">
+        Real or Reel is a platform that helps you determine whether content or URLs are trustworthy.
+        Our goal is to provide accurate, real-time results so users can make informed decisions.
+    </p>
+
+    <!-- Creator Cards -->
+    <div class="creator-cards">
+        <div class="creator-card">
+            <h3>Paul Mallett</h3>
+            <a href="https://www.linkedin.com/in/pjmallett/" target="_blank" class="icon-link">
+                <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/linkedin.svg" alt="LinkedIn" class="icon">
+            </a>
+            <a href="https://github.com/paulcodes777" target="_blank" class="icon-link">
+                <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/github.svg" alt="GitHub" class="icon">
+            </a>
+        </div>
+
+        <div class="creator-card">
+            <h3>Ishan Kanwal</h3>
+            <a href="https://www.linkedin.com/in/ishan-kanwal/" target="_blank" class="icon-link">
+                <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/linkedin.svg" alt="LinkedIn" class="icon">
+            </a>
+            <a href="https://github.com/kanwaliatwit" target="_blank" class="icon-link">
+                <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/github.svg" alt="GitHub" class="icon">
+            </a>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Dark Mode toggle desktop
+    const darkModeBtn = document.getElementById('darkModeBtn');
+    const mobileDarkModeBtn = document.getElementById('mobileDarkModeBtn');
+
+    function updateDarkModeText(btn) {
+        btn.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+    }
+
+    darkModeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        updateDarkModeText(darkModeBtn);
+        updateDarkModeText(mobileDarkModeBtn);
+    });
+
+    mobileDarkModeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        updateDarkModeText(darkModeBtn);
+        updateDarkModeText(mobileDarkModeBtn);
+    });
+
+    updateDarkModeText(darkModeBtn);
+    updateDarkModeText(mobileDarkModeBtn);
+
+    // Mobile Hamburger toggle
+    const burger = document.getElementById("hamburgerBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    burger.addEventListener("click", () => {
+        mobileMenu.classList.toggle("open");
+    });
+</script>
+
+</body>
+</html>
+
+
+
+
