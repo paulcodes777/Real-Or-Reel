@@ -100,7 +100,7 @@ function typeLoop() {
 window.addEventListener('load', typeLoop);
 </script>
 
-<!-- Mobile Hamburger Toggle -->
+<!-- Mobile Menu -->
 <script>
 const burger = document.getElementById("hamburgerBtn");
 const mobileMenu = document.getElementById("mobileMenu");
@@ -110,52 +110,250 @@ burger.addEventListener("click", () => {
 });
 </script>
 
-<!-- Hybrid URL Detection Script -->
+<!-- SUPER ADVANCED URL ANALYZER (FINAL CONSOLIDATED ENGINE) -->
 <script>
-function analyzeURL(inputUrl) {
-    const url = inputUrl.trim().toLowerCase();
-    let issues = [];
 
-    // Look-alike characters
-    const lookAlikePatterns = [{pattern:/0/, replace:"o"}, {pattern:/1/, replace:"l/i"}, {pattern:/3/, replace:"e"}, {pattern:/5/, replace:"s"}, {pattern:/7/, replace:"t"}];
-    lookAlikePatterns.forEach(p => { if (p.pattern.test(url)) issues.push("Uses look-alike characters (possible phishing)."); });
+/* ----------------------------
+   Utility Functions
+----------------------------- */
 
-    // Phishing keywords
-    const phishingKeywords = ["login","verify","secure","update","reset","billing","wallet","help-center","support","account","unlock","recover"];
-    phishingKeywords.forEach(word => { if(url.includes(word)) issues.push(`Contains phishing keyword: "${word}".`); });
-
-    // Suspicious TLDs
-    const badTLDs = [".xyz",".top",".click",".link",".lol",".site",".info",".live",".trading",".support",".rest"];
-    badTLDs.forEach(tld => { if(url.endsWith(tld)) issues.push(`Suspicious domain extension detected: ${tld}`); });
-
-    // Hyphens and subdomains
-    if ((url.match(/-/g)||[]).length>=2) issues.push("Excessive hyphens — common in fake login pages.");
-    if ((url.match(/\./g)||[]).length>=4) issues.push("Too many subdomains — often used in scam redirects.");
-
-    // Long URLs
-    if(url.length>60) issues.push("URL is unusually long — possible tracking or phishing attempt.");
-
-    // Brand imitation
-    const famousBrands = ["paypal","google","facebook","amazon","apple"];
-    famousBrands.forEach(brand => { if(url.includes(brand) && !url.includes(`${brand}.com`)) issues.push(`Possible fake ${brand} site.`); });
-
-    return issues.length===0 ? {safe:true,message:"✅ No obvious phishing patterns detected."} : {safe:false,message:issues};
+// Levenshtein distance (typosquatting detection)
+function levenshtein(a, b) {
+    const dp = Array.from({ length: b.length + 1 }, (_, i) => [i]);
+    for (let j = 1; j <= a.length; j++) dp[0][j] = j;
+    for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+            dp[i][j] = Math.min(
+                dp[i - 1][j] + 1,
+                dp[i][j - 1] + 1,
+                dp[i - 1][j - 1] + (a[j - 1] === b[i - 1] ? 0 : 1)
+            );
+        }
+    }
+    return dp[b.length][a.length];
 }
 
-// Event listener for form
-document.getElementById("urlForm").addEventListener("submit", function(event){
-    event.preventDefault();
-    const input = document.getElementById("urlInput").value;
-    const result = analyzeURL(input);
-    const resultBox = document.getElementById("resultBox");
+// Homoglyph (Cyrillic/Greek)
+function hasHomoglyphs(str) {
+    return /[\u0400-\u04FF\u0370-\u03FF]/.test(str);
+}
 
-    if(result.safe){
-        resultBox.innerHTML = "✅ Safe (no major red flags)";
-    } else {
-        const list = result.message.map(i=>`<li>${i}</li>`).join("");
-        resultBox.innerHTML = `❌ Potential Scam Indicators:<br><ul>${list}</ul>`;
+// Encoded redirect (hex or base64)
+function looksEncoded(str) {
+    return /^[A-Za-z0-9+/]{12,}={0,2}$/.test(str) || /^[0-9A-F]{16,}$/i.test(str);
+}
+
+/* ----------------------------
+   Scam Patterns & Data Sets
+----------------------------- */
+
+const phishingClusters = [
+    ["login", "verify"], ["secure", "update"], ["account", "verify"],
+    ["security", "alert"], ["action", "required"], ["package", "held"],
+    ["delivery", "confirm"], ["account", "locked"], ["review", "appeal"],
+    ["billing", "payment"]
+];
+
+const highRiskBrands = [
+    "bankofamerica", "boa", "chase", "wellsfargo",
+    "instagram", "facebook", "meta", "apple", "appleid",
+    "icloud", "outlook", "hotmail",
+    "fedex", "ups", "usps", "dhl"
+];
+
+const autoUnsafeTLDs = [
+    ".fake", ".invalid", ".test", ".support", ".support-login",
+    ".co-login", ".security-check", ".verify-user", ".user-update"
+];
+
+/* ----------------------------
+   Main Analyzer
+----------------------------- */
+
+function analyzeURL(inputUrl) {
+    let url = inputUrl.trim();
+    let lower = url.toLowerCase();
+    let risk = 0;
+    let findings = [];
+
+    let clean = lower.replace(/^https?:\/\//, "").replace(/^www\./, "");
+    let host = clean.split(/[/?#]/)[0];
+
+    // Auto-unsafe TLDs
+    autoUnsafeTLDs.forEach(tld => {
+        if (host.includes(tld)) {
+            risk += 90;
+            findings.push(`Domain uses high-risk TLD '${tld}'.`);
+        }
+    });
+
+    // Hyphen overload
+    let hyphenCount = (host.match(/-/g) || []).length;
+    if (hyphenCount >= 4) {
+        risk += 40;
+        findings.push("Excessive hyphens suggest a synthetic phishing domain.");
     }
+
+    // Brand impersonation
+    highRiskBrands.forEach(brand => {
+        if (host.includes(brand)) {
+            risk += 50;
+            findings.push(`Brand impersonation detected: '${brand}'.`);
+        }
+    });
+
+    // Phishing keyword clusters
+    phishingClusters.forEach(cluster => {
+        let hits = cluster.filter(word => lower.includes(word));
+        if (hits.length >= 2) {
+            risk += 50;
+            findings.push(`Phishing keyword cluster detected: ${hits.join(" + ")}`);
+        }
+    });
+
+    // Suspicious phishing words
+    const phishingWords = [
+        "login","verify","secure","update","alert","confirm",
+        "required","locked","restore","appeal","payment",
+        "billing","review","suspended","disabled"
+    ];
+    phishingWords.forEach(w => {
+        if (host.includes(w)) {
+            risk += 25;
+            findings.push(`Phishing-related term detected: '${w}'.`);
+        }
+    });
+
+    // Numeric tokens
+    if (/[0-9]{3,}/.test(host)) {
+        risk += 25;
+        findings.push("Suspicious numeric token detected.");
+    }
+
+    // Delivery scam detection
+    const deliveryWords = ["package","delivery","fedex","usps","ups","dhl","held","action-required","fee","confirm-details"];
+    deliveryWords.forEach(w => {
+        if (lower.includes(w)) {
+            risk += 40;
+            findings.push(`Delivery-scam pattern detected: '${w}'.`);
+        }
+    });
+
+    // Encoded redirect
+    if (looksEncoded(lower.split("=").pop())) {
+        risk += 40;
+        findings.push("Encoded redirect detected.");
+    }
+
+    // Homoglyph detection
+    if (hasHomoglyphs(url)) {
+        risk += 40;
+        findings.push("Foreign homoglyph characters detected.");
+    }
+
+    // Typosquatting numbers
+    const numberMaps = [
+        { bad: "0", good: "o" }, { bad: "1", good: "l" },
+        { bad: "3", good: "e" }, { bad: "5", good: "s" },
+        { bad: "7", good: "t" }
+    ];
+    numberMaps.forEach(s => {
+        if (host.includes(s.bad)) {
+            risk += 45;
+            findings.push(`Typosquatting substitution: '${s.bad}' for '${s.good}'.`);
+        }
+    });
+
+    // Levenshtein brand similarity
+    ["paypal","google","amazon","apple","facebook","netflix","chase","microsoft"].forEach(b => {
+        const dist = levenshtein(host, b);
+        if (dist <= 2 && !host.endsWith(`${b}.com`)) {
+            risk += 50;
+            findings.push(`Domain resembles '${b}' — impersonation likely.`);
+        }
+    });
+
+    // Long URL
+    if (url.length > 80) {
+        risk += 20;
+        findings.push("URL is unusually long.");
+    }
+
+    // Excessive subdomains
+    if ((host.match(/\./g) || []).length > 3) {
+        risk += 25;
+        findings.push("Too many subdomains — common in phishing URLs.");
+    }
+
+    // Scoring
+    const score = Math.min(100, risk);
+    const safePercent = Math.max(0, 100 - score);
+
+    let verdict = "SAFE";
+    if (safePercent < 80) verdict = "SUSPICIOUS";
+    if (safePercent < 50) verdict = "UNSAFE";
+
+    return { score, safePercent, verdict, findings };
+}
+
+/* ----------------------------
+   Scan Handler + Animation
+----------------------------- */
+
+document.getElementById("urlForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const input = document.getElementById("urlInput").value;
+    const box = document.getElementById("resultBox");
+
+    // Scanning animation
+    box.innerHTML = "<p>🔍 Scanning URL</p>";
+    let dots = 0;
+    const interval = setInterval(() => {
+        dots = (dots + 1) % 4;
+        box.innerHTML = `<p>🔍 Scanning${'.'.repeat(dots)}</p>`;
+    }, 200);
+
+    setTimeout(() => {
+        clearInterval(interval);
+
+        const result = analyzeURL(input);
+
+        const emoji =
+            result.verdict === "SAFE" ? "✅" :
+            result.verdict === "SUSPICIOUS" ? "⚠️" :
+            "❌";
+
+        const list = result.findings.map(i => `<li>${i}</li>`).join("");
+
+        box.innerHTML = `
+            <p><strong>Status:</strong> ${emoji} ${result.verdict}</p>
+
+            <div style="margin-top:12px;">
+                <div style="width:100%;height:16px;background:#ddd;border-radius:10px;overflow:hidden;">
+                    <div id="meterBar"
+                        style="width:0%;height:100%;background:red;transition:width 1.2s, background 1s"></div>
+                </div>
+                <p><strong>Safety Score:</strong> ${result.safePercent}%</p>
+            </div>
+
+            <p><strong>Reasons:</strong></p>
+            <ul>${list}</ul>
+        `;
+
+        const bar = document.getElementById("meterBar");
+
+        setTimeout(() => {
+            bar.style.width = result.safePercent + "%";
+            bar.style.background =
+                result.safePercent >= 80 ? "#2ecc71" :
+                result.safePercent >= 50 ? "#f1c40f" :
+                "#e74c3c";
+        }, 50);
+
+    }, 900);
 });
+
 </script>
 
 </body>
